@@ -11,10 +11,16 @@ public class App {
 
         JFrame frame = new JFrame("PacMan");
         frame.setSize(boardWidth, boardHeight);
-        frame.setVisible(true);
+        // frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        PacMan pacmanGame = new PacMan();
+        frame.add(pacmanGame);
+        frame.pack();
+        frame.setVisible(true);
+
 
 
     }
