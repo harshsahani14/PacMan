@@ -4,11 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.swing.*;
 
-
-
-public class PacMan extends JPanel{
-
-
+public class PacMan extends JPanel implements ActionListener,KeyListener {
 
     class Block{
 
@@ -21,6 +17,10 @@ public class PacMan extends JPanel{
         int startX;
         int startY;
 
+        char direction = 'R';
+        int velocityX = 0;
+        int velocityY = 0;
+
         Block(int x,int y,int width,int height,Image image){
             this.image=image;
             this.x = x;
@@ -29,6 +29,30 @@ public class PacMan extends JPanel{
             this.height = height;
             this.startX = x;
             this.startY = y;
+        }
+
+        public void changeDirection(char direction){
+            this.direction = direction;
+            updateVelocity();
+        }
+
+        public void updateVelocity(){
+            if(this.direction=='U'){
+                this.velocityX = 0;
+                this.velocityY = -tileSize/4;
+            }
+            else if(this.direction=='D'){
+                this.velocityX = 0;
+                this.velocityY = tileSize/4;
+            }
+            else if(this.direction=='R'){
+                this.velocityX = tileSize/4;
+                this.velocityY = 0;
+            }
+            else if(this.direction=='L'){
+                this.velocityX = -tileSize/4;
+                this.velocityY = 0;
+            }
         }
     }
     
@@ -53,6 +77,8 @@ public class PacMan extends JPanel{
     HashSet<Block> foods;
     HashSet<Block> ghosts;
     Block pacman;
+
+    Timer gameLoop;
 
     private String[] tileMap = {
         "XXXXXXXXXXXXXXXXXXX",
@@ -82,6 +108,9 @@ public class PacMan extends JPanel{
     PacMan(){
         setPreferredSize(new Dimension(boardWidth,boardHeight));
         setBackground(Color.BLACK);
+        addKeyListener(this);
+        setFocusable(true);
+
 
         wallImage = new ImageIcon(getClass().getResource("./wall.png")).getImage();
         blueGhostImage = new ImageIcon(getClass().getResource("./blueGhost.png")).getImage();
@@ -99,6 +128,9 @@ public class PacMan extends JPanel{
         this.foods = new HashSet<>();
 
         loadMap();
+
+        gameLoop = new Timer(50, this);
+        gameLoop.start();
     }
 
     public void loadMap(){
@@ -166,6 +198,42 @@ public class PacMan extends JPanel{
         g.setColor(Color.WHITE);
         for (Block food : foods) {
             g.fillRect(food.x, food.y, food.width, food.height);
+        }
+    }
+
+
+    public void move(){
+        pacman.x+=pacman.velocityX;
+        pacman.y+=pacman.velocityY;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        move();
+        repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) { }
+
+    @Override
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //System.out.println("Key pressed:"+e.getKeyCode());
+
+        if(e.getKeyCode() == KeyEvent.VK_UP){
+            pacman.changeDirection('U');
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_DOWN){
+            pacman.changeDirection('D');
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_LEFT){
+            pacman.changeDirection('L');
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+            pacman.changeDirection('R');
         }
     }
 }
